@@ -2,35 +2,58 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 
-// ✅ GET: Fetch single transaction
+// ✅ GET: Fetch a single transaction by ID
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  await connectDB();
-  const transaction = await Transaction.findById(params.id);
-  return NextResponse.json(transaction);
+  try {
+    await connectDB();
+
+    const { id } = params; // Get the ID from URL params
+    const transaction = await Transaction.findById(id);
+
+    if (!transaction) {
+      return NextResponse.json(
+        { error: "Transaction not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(transaction);
+  } catch (error) {
+    console.error("Error fetching transaction:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
 
-// ✅ PUT: Update a transaction
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  await connectDB();
-  const data = await req.json();
-  const transaction = await Transaction.findByIdAndUpdate(params.id, data, {
-    new: true,
-  });
-  return NextResponse.json(transaction);
-}
-
-// ✅ DELETE: Remove a transaction
+// ✅ DELETE: Remove a transaction by ID
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  await connectDB();
-  await Transaction.findByIdAndDelete(params.id);
-  return NextResponse.json({ message: "Transaction deleted" });
+  try {
+    await connectDB();
+
+    const { id } = params;
+    const transaction = await Transaction.findByIdAndDelete(id);
+
+    if (!transaction) {
+      return NextResponse.json(
+        { error: "Transaction not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ message: "Transaction deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting transaction:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
