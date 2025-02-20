@@ -1,80 +1,70 @@
-import { useState, useEffect } from "react";
 import { Transaction } from "@/types";
+import { motion } from "framer-motion";
+import { Edit } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface TransactionListProps {
+  transactions: Transaction[];
   onEdit: (transaction: Transaction) => void;
 }
 
-export default function TransactionList({ onEdit }: TransactionListProps) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await fetch("/api/transactions");
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch transactions: ${response.statusText}`
-          );
-        }
-
-        const data: Transaction[] = await response.json();
-        setTransactions(data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Failed to load transactions.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTransactions();
-  }, []);
-
-  if (loading) return <p>Loading transactions...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-
+export default function TransactionList({
+  transactions,
+  onEdit,
+}: TransactionListProps) {
   return (
     <div className="space-y-4">
       {transactions.length === 0 ? (
-        <p>No transactions found.</p>
+        <p className="text-gray-500 dark:text-gray-400 text-center">
+          No transactions yet.
+        </p>
       ) : (
         transactions.map((transaction) => (
-          <div
+          <motion.div
             key={transaction._id}
-            className={`p-4 border rounded shadow flex justify-between items-center ${
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.02 }}
+            className={`p-4 rounded-xl shadow-md flex justify-between items-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-l-4 ${
               transaction.type === "income"
-                ? "border-green-500"
-                : "border-red-500"
+                ? "border-green-400"
+                : "border-red-400"
             }`}
           >
             <div>
-              <p className="font-bold">{transaction.title}</p>
+              <p className="font-semibold text-gray-900 dark:text-white">
+                {transaction.title}
+              </p>
               <p
-                className={`text-lg font-semibold ${
+                className={`text-lg font-bold ${
                   transaction.type === "income"
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
               >
                 {transaction.type === "income" ? "+" : "-"} $
-                {transaction.amount}
+                {transaction.amount.toFixed(2)}
               </p>
-              <p className="text-sm text-gray-500">{transaction.category}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {transaction.category}
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">
                 {new Date(transaction.date).toLocaleDateString()}
               </p>
             </div>
-            <button
-              onClick={() => onEdit(transaction)}
-              className="bg-yellow-500 text-white px-2 py-1 rounded"
-            >
-              Edit
-            </button>
-          </div>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit(transaction)}
+                className="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 border-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors"
+              >
+                <Edit className="w-4 h-4 mr-1" />
+                Edit
+              </Button>
+            </motion.div>
+          </motion.div>
         ))
       )}
     </div>

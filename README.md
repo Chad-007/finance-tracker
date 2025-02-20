@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance Tracker
 
-## Getting Started
+## 📌 Overview
 
-First, run the development server:
+This is a **Personal Finance Tracking Web Application** built with **Next.js, React, MongoDB, and ShadCN UI**. It allows users to manage their expenses by adding, editing, and removing transactions. The app also provides a **monthly expenses chart** using **Recharts**.
+
+## 🚀 Tech Stack
+
+- **Frontend:** Next.js, React, Tailwind CSS, ShadCN UI
+- **Backend:** Next.js API Routes, MongoDB
+- **UI Components:** ShadCN UI
+- **Charts:** Recharts
+- **Version Control:** Git & GitHub
+- **Deployment:** Vercel
+
+## ✨ Features
+
+- Add new transactions with title, amount, category, date, and type.
+- Edit or delete existing transactions.
+- View a **list of transactions**.
+- **Visualize monthly expenses** using Recharts.
+- Fully responsive UI with **ShadCN UI components**.
+
+## 🛠 Installation & Setup
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/Chad-007/finance-tracker.git
+cd finance-tracker
+```
+
+### 2️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Set Up Environment Variables
+
+Create a `.env.local` file in the root directory and add the following:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+### 4️⃣ Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app should now be running at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📊 Monthly Expenses Chart
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The **Monthly Expense Chart** is implemented using **Recharts** to visualize the expenses dynamically.
 
-## Learn More
+## 🔥 ShadCN UI Setup
 
-To learn more about Next.js, take a look at the following resources:
+ShadCN UI has been successfully initialized. You can add new UI components using:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx shadcn-ui add [component-name]
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Deployment
 
-## Deploy on Vercel
+The app is deployed on **Vercel**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To deploy manually:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+vercel
+```
+
+## 📌 Troubleshooting
+
+If you encounter issues with ShadCN UI or dependencies, try:
+
+```bash
+npx shadcn-ui init
+```
+
+If GitHub rejects your push due to conflicts:
+
+```bash
+git pull --rebase origin main
+git push origin main
+```
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+🚀 **Happy Tracking!** 💰
