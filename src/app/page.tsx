@@ -40,7 +40,7 @@ export default function Home() {
     console.log("Editing transaction:", transaction);
     setEditTransaction(transaction);
     setIsFormOpen(true);
-    setIsListOpen(false); // Collapse list when form opens
+    setIsListOpen(false);
   };
 
   const handleTransactionSaved = (savedTransaction: Transaction) => {
@@ -56,22 +56,20 @@ export default function Home() {
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
-    if (!isFormOpen) setIsListOpen(false); // Collapse list when form expands
+    if (!isFormOpen) setIsListOpen(false);
   };
 
   const toggleList = () => {
     setIsListOpen(!isListOpen);
-    if (!isListOpen) setIsFormOpen(false); // Collapse form when list expands
+    if (!isListOpen) setIsFormOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100 dark:from-indigo-950 dark:via-gray-900 dark:to-purple-950 p-6 overflow-hidden relative">
-      {/* Dynamic Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="w-full h-full bg-[radial-gradient(circle_at_center,_rgba(79,70,229,0.2)_0%,_transparent_70%)] animate-pulse-slow" />
       </div>
 
-      {/* Main Content */}
       <div className="max-w-5xl mx-auto relative z-10">
         <motion.header
           initial={{ opacity: 0, y: -20 }}
@@ -93,9 +91,7 @@ export default function Home() {
           </p>
         </motion.header>
 
-        {/* Two-Column Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Transaction Form */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -135,7 +131,6 @@ export default function Home() {
             </Card>
           </motion.div>
 
-          {/* Transaction List */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -176,7 +171,6 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Monthly Expense Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

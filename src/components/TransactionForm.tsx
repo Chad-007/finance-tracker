@@ -63,7 +63,7 @@ export default function TransactionForm({
       }
 
       const savedTransaction: Transaction = await response.json();
-      onTransactionSaved(savedTransaction); // Pass the saved transaction back to parent
+      onTransactionSaved(savedTransaction);
     } catch (error) {
       console.error("Error saving transaction:", error);
     }

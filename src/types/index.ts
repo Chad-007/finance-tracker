@@ -4,5 +4,5 @@ export interface Transaction {
   amount: number;
   category: string;
   date: string;
-  type: string; // Ensure "type" exists!
+  type: string;
 }
