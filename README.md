@@ -89,11 +89,3 @@ If GitHub rejects your push due to conflicts:
 git pull --rebase origin main
 git push origin main
 ```
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-🚀 **Happy Tracking!** 💰
