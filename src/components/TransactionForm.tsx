@@ -1,45 +1,74 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { Transaction } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface TransactionFormProps {
-  onTransactionSaved: (transaction: Transaction) => void;
-  editTransaction?: Transaction | null;
+  onTransactionSaved?: (transaction: Transaction) => void; // Optional for standalone use
 }
 
 export default function TransactionForm({
   onTransactionSaved,
-  editTransaction,
 }: TransactionFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState<
+    | "Food"
+    | "Transportation"
+    | "Entertainment"
+    | "Bills"
+    | "Shopping"
+    | "Others"
+  >("Food");
   const [date, setDate] = useState("");
   const [type, setType] = useState<"income" | "expense">("expense");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const transactionId = searchParams.get("id");
 
   useEffect(() => {
-    if (editTransaction) {
-      setTitle(editTransaction.title);
-      setAmount(editTransaction.amount.toString());
-      setCategory(editTransaction.category);
-      setDate(new Date(editTransaction.date).toISOString().split("T")[0]);
-      setType(editTransaction.type as "income" | "expense");
-    } else {
-      setTitle("");
-      setAmount("");
-      setCategory("");
-      setDate("");
-      setType("expense");
+    if (transactionId) {
+      const fetchTransaction = async () => {
+        try {
+          const response = await fetch(`/api/transactions/${transactionId}`);
+          if (!response.ok) throw new Error("Failed to fetch transaction");
+          const transaction: Transaction = await response.json();
+          setTitle(transaction.title);
+          setAmount(transaction.amount.toString());
+          setCategory(
+            transaction.category as
+              | "Food"
+              | "Transportation"
+              | "Entertainment"
+              | "Bills"
+              | "Shopping"
+              | "Others"
+          );
+          setDate(new Date(transaction.date).toISOString().split("T")[0]);
+          setType(transaction.type as "income" | "expense");
+        } catch (error) {
+          console.error("Error fetching transaction:", error);
+        }
+      };
+      fetchTransaction();
     }
-  }, [editTransaction]);
+  }, [transactionId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const transactionData = {
-      id: editTransaction?._id,
+      id: transactionId,
       title,
       amount: parseFloat(amount),
       category,
@@ -48,8 +77,10 @@ export default function TransactionForm({
     };
 
     try {
-      const method = editTransaction ? "PUT" : "POST";
-      const url = "/api/transactions";
+      const method = transactionId ? "PUT" : "POST";
+      const url = transactionId
+        ? `/api/transactions/${transactionId}`
+        : "/api/transactions";
 
       const response = await fetch(url, {
         method,
@@ -63,14 +94,17 @@ export default function TransactionForm({
       }
 
       const savedTransaction: Transaction = await response.json();
-      onTransactionSaved(savedTransaction);
+      if (onTransactionSaved) {
+        onTransactionSaved(savedTransaction);
+      }
+      router.push("/"); // Navigate back to dashboard after saving
     } catch (error) {
       console.error("Error saving transaction:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
       <div>
         <Label htmlFor="title">Title</Label>
         <Input
@@ -93,12 +127,30 @@ export default function TransactionForm({
       </div>
       <div>
         <Label htmlFor="category">Category</Label>
-        <Input
-          id="category"
+        <Select
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-        />
+          onValueChange={(
+            value:
+              | "Food"
+              | "Transportation"
+              | "Entertainment"
+              | "Bills"
+              | "Shopping"
+              | "Others"
+          ) => setCategory(value)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Food">Food</SelectItem>
+            <SelectItem value="Transportation">Transportation</SelectItem>
+            <SelectItem value="Entertainment">Entertainment</SelectItem>
+            <SelectItem value="Bills">Bills</SelectItem>
+            <SelectItem value="Shopping">Shopping</SelectItem>
+            <SelectItem value="Others">Others</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div>
         <Label htmlFor="date">Date</Label>
@@ -112,17 +164,21 @@ export default function TransactionForm({
       </div>
       <div>
         <Label>Type</Label>
-        <select
+        <Select
           value={type}
-          onChange={(e) => setType(e.target.value as "income" | "expense")}
-          className="w-full p-2 border rounded"
+          onValueChange={(value: "income" | "expense") => setType(value)}
         >
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="income">Income</SelectItem>
+            <SelectItem value="expense">Expense</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <Button type="submit">
-        {editTransaction ? "Update" : "Add"} Transaction
+        {transactionId ? "Update" : "Add"} Transaction
       </Button>
     </form>
   );
