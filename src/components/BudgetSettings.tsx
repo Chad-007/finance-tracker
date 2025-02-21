@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Budget } from "@/types";
+import { Budget, BudgetSettingsProps } from "@/types"; // Import from types/index.ts
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,14 +16,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
-interface BudgetSettingsProps {
-  initialBudgets?: Budget[];
-}
-
 export default function BudgetSettings({
-  initialBudgets,
+  onBudgetUpdated,
 }: BudgetSettingsProps) {
-  const [budgets, setBudgets] = useState<Budget[]>(initialBudgets || []);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
   const [category, setCategory] = useState<
     | "Food"
     | "Transportation"
@@ -85,13 +81,21 @@ export default function BudgetSettings({
       }
 
       const updatedBudget: Budget = await response.json();
-      setBudgets((prev) =>
-        prev.map((b) =>
-          b.category === updatedBudget.category ? updatedBudget : b
-        )
-      );
+      const newBudgets = budgets.some(
+        (b) => b.category === updatedBudget.category
+      )
+        ? budgets.map((b) =>
+            b.category === updatedBudget.category ? updatedBudget : b
+          )
+        : [...budgets, updatedBudget];
+
+      setBudgets(newBudgets);
+      onBudgetUpdated(newBudgets); // Call the callback to update budgets in Home.tsx
       setAmount("");
-      router.push("/"); // Navigate back to dashboard after saving
+      // Optional: Only redirect in standalone mode if desired
+      if (!onBudgetUpdated) {
+        router.push("/"); // Navigate back to dashboard after saving (standalone mode)
+      }
     } catch (error) {
       console.error("Error setting budget:", error);
     }

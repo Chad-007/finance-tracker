@@ -113,7 +113,6 @@ export default function Home() {
       type: "expense",
     }
   ).category;
-  const recentTransactions = transactions.slice(0, 5); // Top 5 most recent
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100 dark:from-indigo-950 dark:via-gray-900 dark:to-purple-950 p-6 overflow-hidden relative">

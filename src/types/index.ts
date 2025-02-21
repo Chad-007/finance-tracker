@@ -25,3 +25,11 @@ export interface Budget {
   month: string; // e.g., "Jan 2025"
   year: number;
 }
+export interface TransactionFormProps {
+  onTransactionSaved: (savedTransaction: Transaction) => void;
+  editTransaction: Transaction | null;
+}
+
+export interface BudgetSettingsProps {
+  onBudgetUpdated: (updatedBudgets: Budget[]) => void;
+}

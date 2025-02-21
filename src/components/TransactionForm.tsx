@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Transaction } from "@/types";
+import { Transaction, TransactionFormProps } from "@/types"; // Import from types/index.ts
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,12 +14,9 @@ import {
 } from "@/components/ui/select";
 import { useRouter, useSearchParams } from "next/navigation";
 
-interface TransactionFormProps {
-  onTransactionSaved?: (transaction: Transaction) => void; // Optional for standalone use
-}
-
 export default function TransactionForm({
   onTransactionSaved,
+  editTransaction,
 }: TransactionFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -37,8 +34,17 @@ export default function TransactionForm({
   const searchParams = useSearchParams();
   const transactionId = searchParams.get("id");
 
+  // Populate form with editTransaction data if provided, or fetch if transactionId exists
   useEffect(() => {
-    if (transactionId) {
+    if (editTransaction) {
+      // Use editTransaction prop from Home.tsx if provided
+      setTitle(editTransaction.title);
+      setAmount(editTransaction.amount.toString());
+      setCategory(editTransaction.category);
+      setDate(new Date(editTransaction.date).toISOString().split("T")[0]);
+      setType(editTransaction.type);
+    } else if (transactionId) {
+      // Fetch transaction data if ID is in URL (standalone mode)
       const fetchTransaction = async () => {
         try {
           const response = await fetch(`/api/transactions/${transactionId}`);
@@ -46,29 +52,21 @@ export default function TransactionForm({
           const transaction: Transaction = await response.json();
           setTitle(transaction.title);
           setAmount(transaction.amount.toString());
-          setCategory(
-            transaction.category as
-              | "Food"
-              | "Transportation"
-              | "Entertainment"
-              | "Bills"
-              | "Shopping"
-              | "Others"
-          );
+          setCategory(transaction.category);
           setDate(new Date(transaction.date).toISOString().split("T")[0]);
-          setType(transaction.type as "income" | "expense");
+          setType(transaction.type);
         } catch (error) {
           console.error("Error fetching transaction:", error);
         }
       };
       fetchTransaction();
     }
-  }, [transactionId]);
+  }, [editTransaction, transactionId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const transactionData = {
-      id: transactionId,
+    const transactionData: Transaction = {
+      _id: transactionId || editTransaction?._id || Date.now().toString(), // Use existing ID or temp ID
       title,
       amount: parseFloat(amount),
       category,
@@ -77,10 +75,11 @@ export default function TransactionForm({
     };
 
     try {
-      const method = transactionId ? "PUT" : "POST";
-      const url = transactionId
-        ? `/api/transactions/${transactionId}`
-        : "/api/transactions";
+      const method = transactionId || editTransaction ? "PUT" : "POST";
+      const url =
+        transactionId || editTransaction
+          ? `/api/transactions/${transactionId || editTransaction?._id}`
+          : "/api/transactions";
 
       const response = await fetch(url, {
         method,
@@ -95,7 +94,7 @@ export default function TransactionForm({
 
       const savedTransaction: Transaction = await response.json();
       if (onTransactionSaved) {
-        onTransactionSaved(savedTransaction);
+        onTransactionSaved(savedTransaction); // Call callback if provided (from Home.tsx)
       }
       router.push("/"); // Navigate back to dashboard after saving
     } catch (error) {
@@ -178,7 +177,7 @@ export default function TransactionForm({
         </Select>
       </div>
       <Button type="submit">
-        {transactionId ? "Update" : "Add"} Transaction
+        {transactionId || editTransaction ? "Update" : "Add"} Transaction
       </Button>
     </form>
   );
