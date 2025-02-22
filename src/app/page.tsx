@@ -66,6 +66,24 @@ export default function Home() {
     refreshTransactions();
   };
 
+  // Handle Delete Transaction
+  const handleDelete = async (transactionId: string) => {
+    try {
+      const response = await fetch(`/api/transactions?id=${transactionId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete transaction");
+      }
+
+      // Remove the deleted transaction from the state
+      setTransactions((prev) => prev.filter((t) => t._id !== transactionId));
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+    }
+  };
+
   const toggleForm = () => {
     setIsFormOpen((prev) => !prev);
     if (!isFormOpen) setIsListOpen(false);
@@ -329,6 +347,7 @@ export default function Home() {
                       <TransactionList
                         transactions={transactions.slice(0, 5)} // Limit to 5 for mobile
                         onEdit={handleEdit}
+                        onDelete={handleDelete} // Pass the delete handler
                       />
                     </CardContent>
                   </motion.div>

@@ -1,16 +1,18 @@
 import { Transaction } from "@/types";
 import { motion } from "framer-motion";
-import { Edit } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface TransactionListProps {
   transactions: Transaction[];
   onEdit: (transaction: Transaction) => void;
+  onDelete: (transactionId: string) => void; // Added delete function
 }
 
 export default function TransactionList({
   transactions,
   onEdit,
+  onDelete, // Receive the delete function
 }: TransactionListProps) {
   return (
     <div className="space-y-4">
@@ -53,17 +55,33 @@ export default function TransactionList({
                 {new Date(transaction.date).toLocaleDateString()}
               </p>
             </div>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onEdit(transaction)}
-                className="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 border-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors"
-              >
-                <Edit className="w-4 h-4 mr-1" />
-                Edit
-              </Button>
-            </motion.div>
+            <div className="flex space-x-2">
+              {/* Edit Button */}
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onEdit(transaction)}
+                  className="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 border-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors"
+                >
+                  <Edit className="w-4 h-4 mr-1" />
+                  Edit
+                </Button>
+              </motion.div>
+
+              {/* Delete Button */}
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onDelete(transaction._id)}
+                  className="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 border-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                >
+                  <Trash className="w-4 h-4 mr-1" />
+                  Delete
+                </Button>
+              </motion.div>
+            </div>
           </motion.div>
         ))
       )}

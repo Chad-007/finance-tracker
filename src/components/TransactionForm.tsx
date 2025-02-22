@@ -65,22 +65,34 @@ export default function TransactionForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const transactionData: Transaction = {
-      _id: transactionId || editTransaction?._id || Date.now().toString(), // Use existing _id or temp ID
-      title,
-      amount: parseFloat(amount),
-      category,
-      date,
-      type,
-    };
+    let transactionData: Transaction;
+    const method = transactionId || editTransaction ? "PUT" : "POST";
+    const url =
+      transactionId || editTransaction
+        ? `/api/transactions?id=${transactionId || editTransaction?._id}` // Use query param for PUT
+        : "/api/transactions";
+
+    if (method === "PUT") {
+      transactionData = {
+        _id: transactionId || (editTransaction?._id as string), // _id is needed for PUT
+        title,
+        amount: parseFloat(amount),
+        category,
+        date,
+        type,
+      };
+    } else {
+      transactionData = {
+        _id: Date.now().toString(), // Add a temporary _id for POST requests
+        title,
+        amount: parseFloat(amount),
+        category,
+        date,
+        type,
+      };
+    }
 
     try {
-      const method = transactionId || editTransaction ? "PUT" : "POST";
-      const url =
-        transactionId || editTransaction
-          ? `/api/transactions?id=${transactionId || editTransaction?._id}` // Use query param for PUT
-          : "/api/transactions";
-
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },

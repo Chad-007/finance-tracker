@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 
-// ✅ GET: Fetch all transactions or a specific transaction by ID
+// ✅ GET: Fetch all transactions OR a specific transaction by ID
 export async function GET(req: Request) {
   try {
     await connectDB();
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id");
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
 
     if (id) {
       // Fetch a specific transaction by ID
@@ -101,12 +101,12 @@ export async function PUT(req: Request) {
   }
 }
 
-// ✅ GET: Fetch a specific transaction by ID
-export async function GETById(req: Request) {
+// ✅ DELETE: Remove a transaction by ID
+export async function DELETE(req: Request) {
   try {
     await connectDB();
-    const url = new URL(req.url);
-    const id = url.searchParams.get("id");
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
 
     if (!id) {
       return NextResponse.json(
@@ -115,18 +115,17 @@ export async function GETById(req: Request) {
       );
     }
 
-    const transaction = await Transaction.findById(id);
-
-    if (!transaction) {
+    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+    if (!deletedTransaction) {
       return NextResponse.json(
         { error: "Transaction not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(transaction);
+    return NextResponse.json({ message: "Transaction deleted successfully" });
   } catch (error) {
-    console.error("Error fetching transaction:", error);
+    console.error("Transaction deletion error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
