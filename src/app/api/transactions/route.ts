@@ -2,10 +2,26 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 
-// ✅ GET: Fetch all transactions
-export async function GET() {
+// ✅ GET: Fetch all transactions or a specific transaction by ID
+export async function GET(req: Request) {
   try {
     await connectDB();
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
+
+    if (id) {
+      // Fetch a specific transaction by ID
+      const transaction = await Transaction.findById(id);
+      if (!transaction) {
+        return NextResponse.json(
+          { error: "Transaction not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(transaction);
+    }
+
+    // Fetch all transactions if no ID is provided
     const transactions = await Transaction.find().sort({ date: -1 });
     return NextResponse.json(transactions);
   } catch (error) {
