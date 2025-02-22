@@ -47,7 +47,7 @@ export default function TransactionForm({
       // Fetch transaction data if ID is in URL (standalone mode)
       const fetchTransaction = async () => {
         try {
-          const response = await fetch(`/api/transactions/${transactionId}`);
+          const response = await fetch(`/api/transactions?id=${transactionId}`); // Use query param instead of path param
           if (!response.ok) throw new Error("Failed to fetch transaction");
           const transaction: Transaction = await response.json();
           setTitle(transaction.title);
@@ -66,7 +66,7 @@ export default function TransactionForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const transactionData: Transaction = {
-      _id: transactionId || editTransaction?._id || Date.now().toString(), // Use existing ID or temp ID
+      _id: transactionId || editTransaction?._id || Date.now().toString(), // Use existing _id or temp ID
       title,
       amount: parseFloat(amount),
       category,
@@ -78,7 +78,7 @@ export default function TransactionForm({
       const method = transactionId || editTransaction ? "PUT" : "POST";
       const url =
         transactionId || editTransaction
-          ? `/api/transactions/${transactionId || editTransaction?._id}`
+          ? `/api/transactions?id=${transactionId || editTransaction?._id}` // Use query param for PUT
           : "/api/transactions";
 
       const response = await fetch(url, {
@@ -103,18 +103,32 @@ export default function TransactionForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 max-w-md mx-auto p-3 sm:p-4 md:p-6 bg-gray-800/90 backdrop-blur-md shadow-2xl rounded-2xl border border-gray-700/50"
+    >
       <div>
-        <Label htmlFor="title">Title</Label>
+        <Label
+          htmlFor="title"
+          className="text-white font-poppins text-sm sm:text-base md:text-lg"
+        >
+          Title
+        </Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
+          className="bg-gray-700 text-white border-gray-600 focus:border-emerald-400 font-poppins text-sm sm:text-base md:text-lg placeholder-gray-400 mt-1"
         />
       </div>
       <div>
-        <Label htmlFor="amount">Amount</Label>
+        <Label
+          htmlFor="amount"
+          className="text-white font-poppins text-sm sm:text-base md:text-lg"
+        >
+          Amount
+        </Label>
         <Input
           id="amount"
           type="number"
@@ -122,10 +136,16 @@ export default function TransactionForm({
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
+          className="bg-gray-700 text-white border-gray-600 focus:border-emerald-400 font-poppins text-sm sm:text-base md:text-lg placeholder-gray-400 mt-1"
         />
       </div>
       <div>
-        <Label htmlFor="category">Category</Label>
+        <Label
+          htmlFor="category"
+          className="text-white font-poppins text-sm sm:text-base md:text-lg"
+        >
+          Category
+        </Label>
         <Select
           value={category}
           onValueChange={(
@@ -138,45 +158,96 @@ export default function TransactionForm({
               | "Others"
           ) => setCategory(value)}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full bg-gray-700 text-white border-gray-600 focus:border-emerald-400 font-poppins text-sm sm:text-base md:text-lg mt-1">
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Food">Food</SelectItem>
-            <SelectItem value="Transportation">Transportation</SelectItem>
-            <SelectItem value="Entertainment">Entertainment</SelectItem>
-            <SelectItem value="Bills">Bills</SelectItem>
-            <SelectItem value="Shopping">Shopping</SelectItem>
-            <SelectItem value="Others">Others</SelectItem>
+          <SelectContent className="bg-gray-700 text-white border-gray-600 font-poppins">
+            <SelectItem
+              value="Food"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Food
+            </SelectItem>
+            <SelectItem
+              value="Transportation"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Transportation
+            </SelectItem>
+            <SelectItem
+              value="Entertainment"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Entertainment
+            </SelectItem>
+            <SelectItem
+              value="Bills"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Bills
+            </SelectItem>
+            <SelectItem
+              value="Shopping"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Shopping
+            </SelectItem>
+            <SelectItem
+              value="Others"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Others
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
-        <Label htmlFor="date">Date</Label>
+        <Label
+          htmlFor="date"
+          className="text-white font-poppins text-sm sm:text-base md:text-lg"
+        >
+          Date
+        </Label>
         <Input
           id="date"
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           required
+          className="bg-gray-700 text-white border-gray-600 focus:border-emerald-400 font-poppins text-sm sm:text-base md:text-lg mt-1"
         />
       </div>
       <div>
-        <Label>Type</Label>
+        <Label className="text-white font-poppins text-sm sm:text-base md:text-lg">
+          Type
+        </Label>
         <Select
           value={type}
           onValueChange={(value: "income" | "expense") => setType(value)}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full bg-gray-700 text-white border-gray-600 focus:border-emerald-400 font-poppins text-sm sm:text-base md:text-lg mt-1">
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="income">Income</SelectItem>
-            <SelectItem value="expense">Expense</SelectItem>
+          <SelectContent className="bg-gray-700 text-white border-gray-600 font-poppins">
+            <SelectItem
+              value="income"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Income
+            </SelectItem>
+            <SelectItem
+              value="expense"
+              className="font-poppins text-white hover:bg-gray-600 text-sm sm:text-base md:text-lg"
+            >
+              Expense
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit">
+      <Button
+        type="submit"
+        className="bg-emerald-500 hover:bg-emerald-600 text-white font-poppins text-sm sm:text-base md:text-lg py-2 px-4 rounded-lg"
+      >
         {transactionId || editTransaction ? "Update" : "Add"} Transaction
       </Button>
     </form>

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
-import Budget from "@/models/Budget";
 
 // ✅ GET: Fetch all transactions
 export async function GET() {
@@ -50,23 +49,23 @@ export async function POST(req: Request) {
   }
 }
 
-// ✅ PUT: Update an existing transaction
+// ✅ PUT: Update an existing transaction by ID
 export async function PUT(req: Request) {
   try {
     await connectDB();
-    const { id, title, amount, category, date, type } = await req.json();
+    const { _id, title, amount, category, date, type } = await req.json();
 
-    if (!id || !title || !amount || !category || !date || !type) {
+    if (!_id || !title || !amount || !category || !date || !type) {
       return NextResponse.json(
-        { error: "All fields are required, including id" },
+        { error: "All fields are required, including _id" },
         { status: 400 }
       );
     }
 
     const updatedTransaction = await Transaction.findByIdAndUpdate(
-      id,
+      _id,
       { title, amount, category, date, type },
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!updatedTransaction) {
@@ -86,54 +85,32 @@ export async function PUT(req: Request) {
   }
 }
 
-// ✅ GET: Fetch budgets for the current month
-export async function GETBudgets() {
+// ✅ GET: Fetch a specific transaction by ID
+export async function GETById(req: Request) {
   try {
     await connectDB();
-    const now = new Date();
-    const month = now.toLocaleString("default", { month: "short" });
-    const year = now.getFullYear();
-    const budgets = await Budget.find({ month, year });
-    return NextResponse.json(budgets);
-  } catch (error) {
-    console.error("Error fetching budgets:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
 
-// ✅ POST: Create or update a budget
-export async function POSTBudget(req: Request) {
-  try {
-    await connectDB();
-    const { category, amount } = await req.json();
-
-    if (!category || !amount) {
+    if (!id) {
       return NextResponse.json(
-        { error: "Category and amount are required" },
+        { error: "Transaction ID is required" },
         { status: 400 }
       );
     }
 
-    const now = new Date();
-    const month = now.toLocaleString("default", { month: "short" });
-    const year = now.getFullYear();
+    const transaction = await Transaction.findById(id);
 
-    // Check if budget exists for this category, month, and year
-    let budget = await Budget.findOne({ category, month, year });
-    if (budget) {
-      budget.amount = amount;
-      await budget.save();
-    } else {
-      budget = new Budget({ category, amount, month, year });
-      await budget.save();
+    if (!transaction) {
+      return NextResponse.json(
+        { error: "Transaction not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(budget, { status: 201 });
+    return NextResponse.json(transaction);
   } catch (error) {
-    console.error("Budget creation/update error:", error);
+    console.error("Error fetching transaction:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
