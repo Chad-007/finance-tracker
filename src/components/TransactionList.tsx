@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 interface TransactionListProps {
   transactions: Transaction[];
   onEdit: (transaction: Transaction) => void;
-  onDelete: (transactionId: string) => void; // Added delete function
+  onDelete: (transactionId: string) => void;
 }
 
 export default function TransactionList({
   transactions,
   onEdit,
-  onDelete, // Receive the delete function
+  onDelete,
 }: TransactionListProps) {
   return (
     <div className="space-y-4">

@@ -1,22 +1,21 @@
-// src/types/framer-motion.d.ts
 import { MotionProps } from "framer-motion";
 
 declare module "framer-motion" {
   interface HTMLMotionProps extends MotionProps {
     animate?: MotionProps["animate"] & {
-      rotate?: number | string; // Add rotate as a valid animation property
+      rotate?: number | string;
     };
     transition?: MotionProps["transition"] & {
-      rotate?: number | string; // Ensure transition can handle rotate
+      rotate?: number | string;
     };
   }
 
   interface SVGMotionProps extends MotionProps {
     animate?: MotionProps["animate"] & {
-      rotate?: number | string; // Add rotate for SVG elements
+      rotate?: number | string;
     };
     transition?: MotionProps["transition"] & {
-      rotate?: number | string; // Ensure transition can handle rotate
+      rotate?: number | string;
     };
   }
 }

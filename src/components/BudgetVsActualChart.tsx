@@ -60,7 +60,6 @@ export default function BudgetVsActualChart({
     const month = now.toLocaleString("default", { month: "short" });
     const year = now.getFullYear();
 
-    // Define all possible categories
     const allCategories = [
       "Food",
       "Transportation",
@@ -70,7 +69,6 @@ export default function BudgetVsActualChart({
       "Others",
     ] as const;
 
-    // Calculate actual expenses for the current month
     const actuals: { [key: string]: number } = {};
     transactions.forEach(({ amount, category, type, date }) => {
       if (type !== "expense") return;
@@ -83,15 +81,14 @@ export default function BudgetVsActualChart({
       }
     });
 
-    // Map budgets for the current month, ensuring all categories are included
     return allCategories.map((category) => {
       const budget = budgets.find(
         (b) => b.category === category && b.month === month && b.year === year
       );
       return {
         category,
-        budget: budget ? budget.amount : 0, // Default to 0 if no budget exists
-        actual: actuals[category] || 0, // Default to 0 if no actual expense exists
+        budget: budget ? budget.amount : 0,
+        actual: actuals[category] || 0,
       };
     });
   }, [transactions, budgets]);

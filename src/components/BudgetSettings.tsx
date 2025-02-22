@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Budget, BudgetSettingsProps } from "@/types"; // Import from types/index.ts
+import { Budget, BudgetSettingsProps } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,11 +90,11 @@ export default function BudgetSettings({
         : [...budgets, updatedBudget];
 
       setBudgets(newBudgets);
-      onBudgetUpdated(newBudgets); // Call the callback to update budgets in Home.tsx
+      onBudgetUpdated(newBudgets);
       setAmount("");
-      // Optional: Only redirect in standalone mode if desired
+
       if (!onBudgetUpdated) {
-        router.push("/"); // Navigate back to dashboard after saving (standalone mode)
+        router.push("/");
       }
     } catch (error) {
       console.error("Error setting budget:", error);

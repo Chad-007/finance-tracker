@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 
-// ✅ GET: Fetch all transactions OR a specific transaction by ID
 export async function GET(req: Request) {
   try {
     await connectDB();
@@ -10,7 +9,6 @@ export async function GET(req: Request) {
     const id = searchParams.get("id");
 
     if (id) {
-      // Fetch a specific transaction by ID
       const transaction = await Transaction.findById(id);
       if (!transaction) {
         return NextResponse.json(
@@ -21,7 +19,6 @@ export async function GET(req: Request) {
       return NextResponse.json(transaction);
     }
 
-    // Fetch all transactions if no ID is provided
     const transactions = await Transaction.find().sort({ date: -1 });
     return NextResponse.json(transactions);
   } catch (error) {
@@ -33,7 +30,6 @@ export async function GET(req: Request) {
   }
 }
 
-// ✅ POST: Create a new transaction
 export async function POST(req: Request) {
   try {
     await connectDB();
@@ -65,7 +61,6 @@ export async function POST(req: Request) {
   }
 }
 
-// ✅ PUT: Update an existing transaction by ID
 export async function PUT(req: Request) {
   try {
     await connectDB();
@@ -101,7 +96,6 @@ export async function PUT(req: Request) {
   }
 }
 
-// ✅ DELETE: Remove a transaction by ID
 export async function DELETE(req: Request) {
   try {
     await connectDB();

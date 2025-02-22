@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Transaction, TransactionFormProps } from "@/types"; // Import from types/index.ts
+import { Transaction, TransactionFormProps } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,20 +34,17 @@ export default function TransactionForm({
   const searchParams = useSearchParams();
   const transactionId = searchParams.get("id");
 
-  // Populate form with editTransaction data if provided, or fetch if transactionId exists
   useEffect(() => {
     if (editTransaction) {
-      // Use editTransaction prop from Home.tsx if provided
       setTitle(editTransaction.title);
       setAmount(editTransaction.amount.toString());
       setCategory(editTransaction.category);
       setDate(new Date(editTransaction.date).toISOString().split("T")[0]);
       setType(editTransaction.type);
     } else if (transactionId) {
-      // Fetch transaction data if ID is in URL (standalone mode)
       const fetchTransaction = async () => {
         try {
-          const response = await fetch(`/api/transactions?id=${transactionId}`); // Use query param instead of path param
+          const response = await fetch(`/api/transactions?id=${transactionId}`);
           if (!response.ok) throw new Error("Failed to fetch transaction");
           const transaction: Transaction = await response.json();
           setTitle(transaction.title);
@@ -69,12 +66,12 @@ export default function TransactionForm({
     const method = transactionId || editTransaction ? "PUT" : "POST";
     const url =
       transactionId || editTransaction
-        ? `/api/transactions?id=${transactionId || editTransaction?._id}` // Use query param for PUT
+        ? `/api/transactions?id=${transactionId || editTransaction?._id}`
         : "/api/transactions";
 
     if (method === "PUT") {
       transactionData = {
-        _id: transactionId || (editTransaction?._id as string), // _id is needed for PUT
+        _id: transactionId || (editTransaction?._id as string),
         title,
         amount: parseFloat(amount),
         category,
@@ -83,7 +80,7 @@ export default function TransactionForm({
       };
     } else {
       transactionData = {
-        _id: Date.now().toString(), // Add a temporary _id for POST requests
+        _id: Date.now().toString(),
         title,
         amount: parseFloat(amount),
         category,
@@ -106,9 +103,9 @@ export default function TransactionForm({
 
       const savedTransaction: Transaction = await response.json();
       if (onTransactionSaved) {
-        onTransactionSaved(savedTransaction); // Call callback if provided (from Home.tsx)
+        onTransactionSaved(savedTransaction);
       }
-      router.push("/"); // Navigate back to dashboard after saving
+      router.push("/");
     } catch (error) {
       console.error("Error saving transaction:", error);
     }

@@ -66,7 +66,6 @@ export default function Home() {
     refreshTransactions();
   };
 
-  // Handle Delete Transaction
   const handleDelete = async (transactionId: string) => {
     try {
       const response = await fetch(`/api/transactions?id=${transactionId}`, {
@@ -77,7 +76,6 @@ export default function Home() {
         throw new Error("Failed to delete transaction");
       }
 
-      // Remove the deleted transaction from the state
       setTransactions((prev) => prev.filter((t) => t._id !== transactionId));
     } catch (error) {
       console.error("Error deleting transaction:", error);
@@ -129,7 +127,6 @@ export default function Home() {
     }
   ).category;
 
-  // Animation Variants
   const cardVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.95 },
     visible: { opacity: 1, y: 0, scale: 1 },
@@ -147,7 +144,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-2 sm:p-4 md:p-6 overflow-x-hidden relative">
       <div className="max-w-4xl sm:max-w-5xl md:max-w-6xl mx-auto relative z-10">
-        {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -172,7 +168,6 @@ export default function Home() {
           </p>
         </motion.header>
 
-        {/* Budget Settings (Touch/Tap Expandable) */}
         <motion.div
           variants={cardVariants}
           initial="hidden"
@@ -217,7 +212,6 @@ export default function Home() {
           </Card>
         </motion.div>
 
-        {/* Summary Cards */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -262,14 +256,12 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* Transaction Section */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8"
         >
-          {/* Transaction Form */}
           <motion.div variants={cardVariants} whileHover="hover">
             <Card className="bg-gray-800/90 backdrop-blur-md shadow-xl rounded-2xl border border-gray-700/50 overflow-hidden">
               <CardHeader
@@ -312,7 +304,6 @@ export default function Home() {
             </Card>
           </motion.div>
 
-          {/* Transaction List */}
           <motion.div variants={cardVariants} whileHover="hover">
             <Card className="bg-gray-800/90 backdrop-blur-md shadow-xl rounded-2xl border border-gray-700/50 overflow-hidden">
               <CardHeader
@@ -345,9 +336,9 @@ export default function Home() {
                   >
                     <CardContent className="p-3 sm:p-4 md:p-5">
                       <TransactionList
-                        transactions={transactions.slice(0, 5)} // Limit to 5 for mobile
+                        transactions={transactions.slice(0, 5)}
                         onEdit={handleEdit}
-                        onDelete={handleDelete} // Pass the delete handler
+                        onDelete={handleDelete}
                       />
                     </CardContent>
                   </motion.div>

@@ -22,7 +22,7 @@ export interface Budget {
     | "Shopping"
     | "Others";
   amount: number;
-  month: string; // e.g., "Jan 2025"
+  month: string;
   year: number;
 }
 export interface TransactionFormProps {
