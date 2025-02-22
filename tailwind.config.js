@@ -2,7 +2,7 @@
 export default {
   darkMode: ["class"],
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}", // ✅ Include all pages & components
+    "./app/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
@@ -57,4 +57,5 @@ export default {
       },
     },
   },
+  plugins: [], // Remove tailwindcss-animate and tailwind-scrollbar
 };
